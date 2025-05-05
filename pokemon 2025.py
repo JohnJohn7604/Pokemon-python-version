@@ -98,7 +98,7 @@ baseSpDef, moveset):
 
 
 
-##Sistema para detectar a chance do seu pokemon atacar estando paralizado
+##Sistema para calcular a chance do seu pokemon atacar estando paralizado
     def attackChance(self, status):
         chance = random.randint(0, 100)  
         if status == "paralyzed":
@@ -106,7 +106,7 @@ baseSpDef, moveset):
             #print(chance) 
             return chance < 20
         
-    #Sistema para     
+    #Sistema para cal   
     def attackConditions(self, move):
         if self.attackChance(self.status):
             print(f"{self.name} não se mexe, está paralizado!") 
