@@ -57,7 +57,9 @@ baseSpDef, moveset):
         self.hp = 100.0
         self.status = None
 
+    ##CONDIÇÃO DO MOVE, CASO SEJA DE TIRAR DANO OU SE PROVOCA BUFFER AO OPP.
     def attackLogic(self, move):
+        global lastAttack
         if (move.type == 'spAttack' or move.type == 'Attack'):
             opponent.hp -= move.value 
             print(f"{opponent.name} perdeu {move.value} de HP! ")
@@ -96,19 +98,10 @@ baseSpDef, moveset):
 
         time.sleep(2.5)
 
-
-
-##Sistema para calcular a chance do seu pokemon atacar estando paralizado
-    def attackChance(self, status):
-        chance = random.randint(0, 100)  
-        if status == "paralyzed":
-            #debug
-            #print(chance) 
-            return chance < 20
-        
-    #Sistema para cal   
-    def attackConditions(self, move):
-        if self.attackChance(self.status):
+##Sistema para calcular a chance do status do seu pokemon faze-lo não atacar.
+    def attackChance(self, move):
+        chance = random.randint(0, 100) 
+        if self.status == "paralyzed" and chance < 20:
             print(f"{self.name} não se mexe, está paralizado!") 
         else:
             print(f"{self.name} usou {move.name}! ")
@@ -118,36 +111,39 @@ baseSpDef, moveset):
 
     #Sistema para identificar quem ataca primeiro
     def whoAttackFirst(self, speed, move):
+        global yourTurn, lastAttack
         #debug
-        print(f"player speed: {speed}, opponent speed:{opponent.baseSpd}") 
+        #print(f"player speed: {speed}, opponent speed:{opponent.baseSpd}") 
         if speed > opponent.baseSpd:
-            self.attackConditions(move)
+            self.attackChance(move)
         else:
-                changeTurn()
-                player.attack(thunderWave)
+            print("Oponente atacou pq vc está mais lento")    
+            changeTurn()
+            yourTurn = False
+            player.attack(thunderWave)
 
-                changeTurn()
-                yourTurn = True
-                player.attack(move)
+            changeTurn()
+            yourTurn = True
+            self.attackChance(move)
+            lastAttack = player
 
     def attack(self, move):
         #debug
-        print(f"{self.name}")
+        #print(f"{self.name}")
         global yourTurn
         if yourTurn == True:
             self.whoAttackFirst(self.baseSpd, move)
 
         else:
-            
-            if self.attackChance(self.status):
-                print(f"{self.name} não se mexe, está paralizado!") 
-            else:
-                print(f"{self.name} usou {move.name}! ")
-                time.sleep(2.5)
+        #debug 
+            #print("o oponente vai te atacar pq é a vez dele no turno")    
+            self.attackChance(move)
+               
+            time.sleep(2.5)
                     
-                self.attackLogic(move)
+            
   
-    ##CONDIÇÃO DO MOVE, CASO SEJA DE TIRAR DANO OU SE PROVOCA BUFFER AO OPP.
+    
         
 
 #BANCO DE ATAQUES                
@@ -185,14 +181,16 @@ victory = False
 opponent = pikachu
 player = charmander
 yourTurn = True
+lastAttack = opponent
 
 while (victory == False):
     #debug
-    print("inicio do laço")
-    print(f"player {player.name} opp:{opponent.name}")
+    #print("inicio do laço")
+    #print(f"player {player.name} opp:{opponent.name}\n")
 
     if yourTurn == False:
-        player.attack(thunderWave)  #DEBUG
+        changeTurn()
+        player.attack(random.choice(pikachuMove))  #DEBUG
         #player.attack(random.choice(pikachuMove))
         changeTurn()
         yourTurn = True
@@ -203,11 +201,10 @@ while (victory == False):
 
         if userInput == '1':
             player.attack(showMoves())
-            changeTurn()
-            #changeTurn = opponent
-            #opponent = player
-            #player = changeTurn
-            yourTurn = False
+            if lastAttack == player:
+                yourTurn == True
+            else:
+                yourTurn = False
             
             time.sleep(2)
 
