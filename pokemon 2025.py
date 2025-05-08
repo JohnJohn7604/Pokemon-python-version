@@ -11,7 +11,7 @@ def showHP():
 
     print("                ========================")
     print(f"                II  {player.name} Lvl. {player.lvl} II ")
-    print(f"                II  HP: {player.hp:.0f}           II ")   
+    print(f"                II  HP: {player.hp:.0f}             II ")   
     print("                ========================")   
 
 ####
@@ -39,10 +39,16 @@ def changeTurn():
     target = player
     player = change
 
+frutas = ["maçã", "banana", "laranja"]
+
 def showBag():
     print("===================================================")
-    print(f"II (1) {player.bagslot[0].name} (2) {player.bagslot[1].name} II")
-    print(f"II                         (3) {player.bagslot[2].name} II")
+    
+    for index, item in enumerate(player.bagslot, start = 1):
+        print(f"({index}) {player.bagslot[index - 1].name} x {player.bagslot[index - 1].amount}")
+    
+    
+    
     print("===================================================")
 
     index = int(input("Escolha um item e pressione 'Enter' ")) - 1
@@ -87,70 +93,101 @@ baseSpDef, moveset, bagslot):
         self.accuracy = self.baseAccuracy
         self.evasivess = self.baseEvasivess
 
+    def _criticalChance(self):
+        rate = random.randint(0, 100)
+        if rate <= 20:
+            return 1.50
+        else: 
+            return 1.0
+
     def damageCalculator(self, move, atk, targetdef):
         lvlFactor = (self.lvl / (target.lvl + 5) )
         formulaAtkDef = (atk ) / (targetdef)
         formula = formulaAtkDef * move.value 
-        return lvlFactor * formula  
-        
 
+        critical = self._criticalChance()
+        if critical > 1:
+            return (lvlFactor * formula * critical), "Ataque crítico"
+        else:
+            return (lvlFactor * formula * critical), None
+        
+    def evassivesTargetChance(self):
+        chance = random.randint(0, 10)
+        if chance < target.evasivess:
+            return (True), (f"{target.name} desviou do ataque!")
+        else:
+            return (False), (None)
+        
     ##CONDIÇÃO DO MOVE, CASO SEJA DE TIRAR DANO OU SE PROVOCA BUFFER AO OPP.
     def attackLogic(self, move):
         global lastAttack
         if (move.type == 'spAttack'):
-            damage = self.damageCalculator(move, self.specialAtk, target.specialDef)
-            target.hp -= damage
-            print(f"{target.name} perdeu {damage} de HP! ")
+            damage, message = self.damageCalculator(move, self.specialAtk, target.specialDef)
 
         elif (move.type == 'Attack'):
-            damage = self.damageCalculator(move, self.attack, target.defense)
-            target.hp -= damage
-            print(f"{target.name} perdeu {damage} de HP! ")
+            damage, message = self.damageCalculator(move, self.attack, target.defense)
 
         elif (move.effect == "accuracy"):
             newValue = target.accuracy * move.value
             target.accuracy -= newValue
-            print(f"{target.name} perdeu um pouco da precisão dos golpes!")
+            return (f"{target.name} perdeu um pouco da precisão dos golpes!")
 
         elif (move.effect == "paralyze"):
             if (target.status != None and target.status != "paralyzed"):
-                print("O golpe falhou...")
+                return ("O golpe falhou...")
 
             elif (target.status == "paralyzed"):
-                print(f"{target.name} já está paralizado!") 
+                return (f"{target.name} já está paralizado!") 
 
             else:
                 target.status = "paralyzed"
                 target.speed += (target.speed * (-0.5))
-                print(f"{target.name} ficou paralizado")
+                return (f"{target.name} ficou paralizado")
 
         elif (move.effect == "evasive"):
             newValue = player.evasivess * move.value
-            player.evasivess += newValue
-            print(f"{player.name} aumentou um pouco sua evasiva!")
+            player.evasivess += newValue 
+            return (f"{player.name} aumentou um pouco sua evasiva!")
 
         elif (move.effect == "def"):
             newValue = target.defense * move.value
             target.defense -= newValue
-            print(f"{target.name} perdeu um pouco da defesa!")
+            return (f"{target.name} perdeu um pouco da defesa!")
 
         elif (move.effect == "atk"):
             newValue = target.attack * move.value
             target.attack -= newValue
-            print(f"{target.name} perdeu um pouco da força dos golpes!")
+            return (f"{target.name} perdeu um pouco da força dos golpes!")
 
+        targetEscape, message = self.evassivesTargetChance()
+        if targetEscape == True:
+
+            return message
+        else:
+            target.hp -= damage
+            print(f"{target.name} perdeu {damage:.0f} de HP! ")
+            time.sleep(1)
+
+            return message
+            
         time.sleep(2.5)
 
-##Sistema para calcular a chance do status do seu pokemon faze-lo não atacar.
+##Sistema para calcular a chance do seu pokemon não atacar por algum motivo.
     def attackChance(self, move):
         chance = random.randint(0, 100) 
+        ## caso voce esteja paralizado
         if self.status == "paralyzed" and chance < 20:
-            print(f"{self.name} não se mexe, está paralizado!") 
+            return (f"{self.name} não se mexe, está paralizado!") 
         else:
+            ## caso sua precisao esteja abaixo do normal
+            chance = random.randint(0, self.baseAccuracy)
             print(f"{self.name} usou {move.name}! ")
-            time.sleep(2.5)
+            time.sleep(1)
+
+            if chance > self.accuracy and move.type != "status":
+                return (f"{self.name} errou o ataque!") 
                     
-            self.attackLogic(move)
+            return (self.attackLogic(move))
 
     #Sistema para identificar quem ataca primeiro
     def whoAttackFirst(self, move):
@@ -158,7 +195,7 @@ baseSpDef, moveset, bagslot):
         #debug
         #print(f"player speed: {speed}, target speed:{target.speed}") 
         if self.speed > target.speed:
-            self.attackChance(move)
+            print(self.attackChance(move))
         else:
             print("Oponente atacou primeiro vc está mais lento")    
             changeTurn()
@@ -169,7 +206,7 @@ baseSpDef, moveset, bagslot):
 
             changeTurn()
             yourTurn = True
-            self.attackChance(move)
+            print(self.attackChance(move))
             lastAttack = player
 
     def fight(self, move):
@@ -182,18 +219,17 @@ baseSpDef, moveset, bagslot):
         else:
         #debug 
             #print("o oponente vai te atacar pq é a vez dele no turno")    
-            self.attackChance(move)
+            print(self.attackChance(move))
                
             time.sleep(2.5)
 
     def itemLogic(self, item):
         global victory #debug
-        if item.hp == True:
+        if item.hp:
             oldHp = player.hp
             newHp = player.hp + item.value
             if oldHp == 100:
-                message = "Não teve efeito"
-                return message
+                return "Não teve efeito"
             
             if newHp > 100:
                 value = 100 - oldHp
@@ -201,8 +237,7 @@ baseSpDef, moveset, bagslot):
             else:
                 pass
 
-            message = f"{player.name} encheu {value} do seu HP"
-            return message
+            print(f"{player.name} encheu {value} do seu HP")
 
         if item.status == "desparalyze":
 
@@ -214,10 +249,10 @@ baseSpDef, moveset, bagslot):
             else:
                 print("Não teve efeito")
 
-        if item.pokeball == True:
+        if item.pokeball:
             
             capturable = target.captureRate()
-            if capturable == True:
+            if capturable:
                 print(f"..")
                 time.sleep(1)
                 print(f"...")
@@ -232,6 +267,11 @@ baseSpDef, moveset, bagslot):
                 print(f"...")
                 time.sleep(1)
                 print("Ah não! pensei ter capturado!")
+
+        item.amount -= 1
+        if item.amount == 0:
+            self.bagslot.remove(item)
+        return ""
 
     def captureRate(self):
         if target.hp < 30:
@@ -260,24 +300,26 @@ smokeScreen = Move("Smokescreen", 'status', 100, 0.15, "accuracy")
 tackle = Move("Tackle", "Attack", 100, 20.0, None) ##
 tailWhip = Move("Tail Whip", "status", 90, 0.15, "def")
 thundershock = Move("ThunderShock", "spAttack", 100, 40.0, None)
-doubleTeam = Move("Double Team", "self_status", 100, 0.15, "evasive")
+doubleTeam = Move("Double Team", "self_status", 100, 0.20, "evasive")
 growl = Move("Growl", "status", 100, 0.15, "atk")
 thunderwave = Move("Thunderwave", "status", 100, 0, "paralyze")
+quickattack = Move("Quick Attack", "Attack", 100, 40, None)
 
 ################################
 
 ###ITEMS
 class Item:
-    def __init__(self, name, hp, pokeball, status, value):
+    def __init__(self, name, hp, pokeball, status, value, amount):
         self.name = name
         self.hp = hp
         self.pokeball = pokeball
         self.status = status
         self.value = value
+        self.amount = amount
 
-potion = Item("Poção",True, False, "", 20.0)
-desparalyze = Item("Desparalizador", False, False, "desparalyze", 0.0)
-pokeball = Item("Pokebola", False, True, False, 30.0)
+potion = Item("Poção",True, False, "", 20.0, 2)
+desparalyze = Item("Desparalizador", False, False, "desparalyze", 0.0, 1)
+pokeball = Item("Pokebola", False, True, False, 30.0, 3)
 
 
 charmanderBag = [potion, desparalyze, pokeball]
@@ -285,13 +327,13 @@ pikachuBag = [potion, desparalyze, pokeball]
 #POKEMONS
 
 #Charmander
-charmanderMove = [ember, smokeScreen, tackle, tailWhip]
+charmanderMove = [ember, smokeScreen, growl, tailWhip]
 charmander = Pokemon("Charmander", 5, 52, 43, 95, 60, 50, charmanderMove, 
                      charmanderBag)
 charmander.updateStats()
 
 #Pikachu
-pikachuMove = [thundershock, thunderwave, doubleTeam, growl]
+pikachuMove = [quickattack, thunderwave, doubleTeam, tackle]
 pikachu = Pokemon("Pikachu", 5, 55, 40, 90, 50, 50, pikachuMove, pikachuBag)
 pikachu.updateStats()
 
@@ -306,18 +348,15 @@ debug = False
 
 while (victory == False):
     #debug
-    #print("inicio do laço")
-    #print(f"player {player.name} opp:{target.name}\n")
-
     if yourTurn == False:
         changeTurn()
         #if player.status == "paralyzed":
         #    player.bag(player.bagslot[1])
         #else:
         if target.status == "paralyzed" or debug == True:
-            player.fight(thundershock)
+            player.fight(doubleTeam)
         else:    
-            player.fight(thunderwave)  #DEBUG
+            player.fight(doubleTeam)  #DEBUG
             
 
         changeTurn()
