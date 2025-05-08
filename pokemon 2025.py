@@ -187,7 +187,7 @@ baseSpDef, moveset, bagslot):
             time.sleep(2.5)
 
     def itemLogic(self, item):
-        #global debug
+        global victory #debug
         if item.hp == True:
             oldHp = player.hp
             newHp = player.hp + item.value
@@ -214,11 +214,32 @@ baseSpDef, moveset, bagslot):
             else:
                 print("Não teve efeito")
 
-        #if item.pokeball == True:
-            #print(f"{self.name} usou a {item.name}!")
-            #target.captureRate()
+        if item.pokeball == True:
+            
+            capturable = target.captureRate()
+            if capturable == True:
+                print(f"..")
+                time.sleep(1)
+                print(f"...")
+                time.sleep(1)
+                print(f"Parabéns você capturou um {target.name}!!")
+                time.sleep(2)
+                victory = True
 
-    #def
+            else: 
+                print(f"..")
+                time.sleep(1)
+                print(f"...")
+                time.sleep(1)
+                print("Ah não! pensei ter capturado!")
+
+    def captureRate(self):
+        if target.hp < 30:
+            return True
+        else:
+            return False
+
+
     def bag(self, item):
         print(f"{player.name} usou {item.name}!")
         return self.itemLogic(item)
@@ -256,7 +277,7 @@ class Item:
 
 potion = Item("Poção",True, False, "", 20.0)
 desparalyze = Item("Desparalizador", False, False, "desparalyze", 0.0)
-pokeball = Item("Pokebola", False, "", False, 30.0)
+pokeball = Item("Pokebola", False, True, False, 30.0)
 
 
 charmanderBag = [potion, desparalyze, pokeball]
