@@ -1,9 +1,132 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 OPR/118.0.0.0" version="27.0.5">
   <diagram name="Página-1" id="Y6VXZ9dpyGYSkjs_ncvV">
-    <mxGraphModel>
+    <mxGraphModel dx="771" dy="1591" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-17" target="zxnnwbFJTzuRVRJfNA3V-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="80" y="195" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-17" value="tryAgain precisa ser retornado como True para que outro item seja escolhido" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="210" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-1" target="zxnnwbFJTzuRVRJfNA3V-11">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="280" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-1" value="tryAgain começa como True" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="240" y="30" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-4" target="zxnnwbFJTzuRVRJfNA3V-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-14" value="SIM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-5" target="zxnnwbFJTzuRVRJfNA3V-17">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="130" y="310" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="81" y="440" />
+              <mxPoint x="81" y="300" />
+              <mxPoint x="80" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-4" value="Item de encher HP" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="290" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-8" value="NAO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-5" target="zxnnwbFJTzuRVRJfNA3V-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-5" value="HP está cheio?" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="240" y="400" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-7" target="zxnnwbFJTzuRVRJfNA3V-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="400" y="670" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-10" value="YourTurn precisa ser retornado como False" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="770" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-11" target="zxnnwbFJTzuRVRJfNA3V-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-11" target="zxnnwbFJTzuRVRJfNA3V-16">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="300" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="870" y="195" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-11" target="zxnnwbFJTzuRVRJfNA3V-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-11" value="escolha um item&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="170" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-16" target="zxnnwbFJTzuRVRJfNA3V-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-16" value="Cura status" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="810" y="290" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-18" value="tryAgain precisa ser retornado como False" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="620" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-21" value="SIM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-19">
+          <mxGeometry x="-0.6212" y="1" relative="1" as="geometry">
+            <mxPoint x="80" y="440" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="415" y="520" />
+              <mxPoint x="415" y="521" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-24" value="NÃO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-19" target="zxnnwbFJTzuRVRJfNA3V-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-19" value="seu status está normal?" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="797.5" y="450" width="145" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-7" value="Hp se cura" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="340" y="500" width="120" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-23" value="Seu status é curado" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="810" y="640" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.013;entryY=0.638;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-23" target="zxnnwbFJTzuRVRJfNA3V-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-26" target="zxnnwbFJTzuRVRJfNA3V-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-26" value="Pokebola" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="290" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-30" value="NÃO" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-28" target="zxnnwbFJTzuRVRJfNA3V-10">
+          <mxGeometry x="-0.8131" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="530" />
+              <mxPoint x="1000" y="800" />
+            </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-32" value="SIM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="zxnnwbFJTzuRVRJfNA3V-28" target="zxnnwbFJTzuRVRJfNA3V-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-28" value="Capturou?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="475" width="100" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="zxnnwbFJTzuRVRJfNA3V-31" value="Você venceu" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="690" width="120" height="60" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
