@@ -23,19 +23,23 @@ pikachuBag = [potion, desparalyze, pokeball]
 
 #Charmander
 charmanderMove = [ember, smokeScreen, growl, tailWhip]
-charmander = Pokemon("Charmander", 5, 52, 43, 85, charmanderMove, charmanderBag)
+charmander = Pokemon("Charmander", 5, 52, 43, 95, charmanderMove, charmanderBag)
 charmander.updateStats()
 
 #Pikachu
 pikachuMove = [quickattack, thunderwave, doubleTeam, tackle]
-pikachu = Pokemon("Pikachu", 5, 11, 11, 90, pikachuMove, pikachuBag)
+pikachu = Pokemon("Pikachu", 5, 55, 40, 90, pikachuMove, pikachuBag)
 pikachu.updateStats()
 
+#INICIO DA BATALHA
 target = pikachu
 player = charmander
 yourTurn = True
 victory = False
-while (victory == False):
-    yourTurn = battle(player, target, yourTurn, victory)
 
-print("Parabéns você venceu!!")
+while (victory == False):
+    yourTurn, victory = battle(player, target, yourTurn, victory)
+
+if player.hp > target.hp:
+    print("Fim da batalha!!")
+

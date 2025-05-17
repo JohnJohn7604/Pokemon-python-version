@@ -1,7 +1,5 @@
 import random, time
 
-
-
 def changeTurn(player, target):
     print(f"ANTES: {player.name}, {target.name}")
     return target, player
@@ -34,9 +32,23 @@ def menu():
 
     return input("Escolha uma opção e pressione 'Enter' ")
 
+def winner_checker(player, target):
+    if player.hp <= 0.1:
+        print(f"{player.name} desmaiou!")
+        return True
+    elif target.hp <= 0.1:
+        print(f"{target.name} desmaiou!")
+        return True
+    else:
+        return False
+    
+
+#Jogo
 def battle(player, target, yourTurn, victory):
-    ##fazer logica da vitoria aqui
-    victory = False 
+    
+    victory = winner_checker(player, target)
+    if victory:
+        return yourTurn, victory
     
     if yourTurn:
         showHP(player, target)
@@ -46,8 +58,9 @@ def battle(player, target, yourTurn, victory):
             showHP(player, target)
             player_move = showMoves(player)
             yourTurn = player.fight(player_move, target, yourTurn)
+            print("\n")
             time.sleep(2)
-            return yourTurn
+            return yourTurn, False
 
         elif userInput == '2':
             tryAgain = True
@@ -55,22 +68,30 @@ def battle(player, target, yourTurn, victory):
 
             while tryAgain:
                 player_item = player.bag(target, victory)
-                tryAgain, message = itemLogic(player, player_item, target, victory)
+                tryAgain, message, target_captured = itemLogic(player, 
+                player_item, target)
                 print(message)
+
+                if target_captured:
+                    return yourTurn, True
+
+                
 
             itemCount(player, player_item)
             time.sleep(2)
             yourTurn = False
-            time.sleep(2)
+            return yourTurn, False
+            
 
         else:
             print('Você fugiu da batalha')
             time.sleep(2)
             
     else:
-    
-        yourTurn = target.fight(target.moveset[2], player, yourTurn)  
-        return yourTurn
+        pikachu_move = target.pikachu_ai(random.choice(target.moveset))
+        yourTurn = target.fight(pikachu_move, player, yourTurn)  
+        print("\n")
+        return yourTurn, False
         
         
 
@@ -80,7 +101,8 @@ def whoIsMoreFast(speed, target_speed):
     if speed > target_speed:
         return True
     else:
-        print("Oponente atacou primeiro vc está mais lento")    
+        print("Oponente irá atacar primeiro, pois você está mais lento\n")    
+        time.sleep(1.5)
         return False  
     
 ##Sistema para calcular a chance do seu pokemon não atacar por algum motivo.        
@@ -135,12 +157,12 @@ def attackLogic(player, move, target):
             return ("O golpe falhou...")
 
         elif (target.status == "paralyzed"):
-            return (f"{target.name} já está paralizado!") 
+            return (f"{target.name} já está paralisado!") 
 
         else:
             target.status = "paralyzed"
             target.speed += (target.speed * (-0.5))
-            return (f"{target.name} ficou paralizado")
+            return (f"{target.name} ficou paralisado")
 
     elif (move.effect == "evasive"):
         if player.evasivess >= 70:
@@ -182,13 +204,13 @@ def attackLogic(player, move, target):
         return (f"{target.name} perdeu um pouco da força dos golpes!")
 
 
-def itemLogic(player, item, target, victory):
+def itemLogic(player, item, target):
         if item.hp:
             oldHp = player.hp
             newHp = item.value + oldHp
             
             if oldHp == 100:
-                return True, "Não irá ter efeito"
+                return True, "Não irá ter efeito", False
             
             if newHp > 100:
                 hp_gain = 100 - oldHp
@@ -198,7 +220,7 @@ def itemLogic(player, item, target, victory):
                 player.hp += hp_gain    
 
             print(f"{player.name} usou {item.name}!")
-            return False, (f"{player.name} encheu {hp_gain:.0f} do seu HP")
+            return False, (f"{player.name} encheu {hp_gain:.0f} do seu HP"), False
 
         if item.status == "desparalyze":
 
@@ -207,10 +229,9 @@ def itemLogic(player, item, target, victory):
                 player.speed = player.baseSpd
                 print(f"{player.name} usou {item.name}!")
                 
-                return False, f"{player.name} curou paralisia!"
-                #debug = True
+                return False, f"{player.name} curou paralisia!", False
             else:
-                return True, "Não irá ter efeito"
+                return True, "Não irá ter efeito", False
 
         if item.pokeball:
             
@@ -222,8 +243,7 @@ def itemLogic(player, item, target, victory):
                 time.sleep(1)
                 print(f"...")
                 time.sleep(1)
-                victory = True
-                return False, (f"Parabéns você capturou um {target.name}!!")
+                return False, (f"Parabéns você capturou um {target.name}!!"), True
                 time.sleep(2)
             
             else: 
@@ -232,13 +252,13 @@ def itemLogic(player, item, target, victory):
                 time.sleep(1)
                 print(f"...")
                 time.sleep(1)
-                return False, ("Ah não! pensei ter capturado!")
+                return False, ("Ah não! pensei ter capturado!"), False
             
 def itemCount(player, item):
     item.amount -= 1
     if item.amount == 0:
         player.bagslot.remove(item)
-    return ""
+    
 
         
 

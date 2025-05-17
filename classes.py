@@ -10,7 +10,7 @@ class Pokemon:
         self.baseDef = baseDef
         self.baseSpd = baseSpd
         self.baseAccuracy = 11 #standard: 8  max: 8
-        self.baseEvasivess = 10 #standard: 10 max: 70
+        self.baseEvasivess = 15 #standard: 15 max: 70
         self.attack = None
         self.defense = None
         self.speed = None
@@ -21,6 +21,7 @@ class Pokemon:
         self.status = None
         self.bagslot = bagslot
         self.updateStats()
+        self.last_move = None
         
 
     def updateStats(self):
@@ -47,28 +48,30 @@ class Pokemon:
         if critical > 1:
             return (lvlFactor * formula * critical), True
         else:
-            return (lvlFactor * formula * critical), True
+            return (lvlFactor * formula * critical), False
 
    #CHANCE DO OPONENTE DESVIAR DO GOLPE       
     def evassivesTargetChance(self, target):
         chance = random.randint(0, 100)
-        #quanto maior o evasivess maior a chance de escapar
+        #quanto maior o evasivess maior a chance do oponente escapar.
         if chance <= target.evasivess:
             return (True), (f"{target.name} desviou do ataque!")
         else:
             return (False), (None)
     
     def fight(self, move, target, yourTurn):
-        print(f"{self.name}, {target.name}")
         player_move = move
+        self.last_move = move
         if yourTurn:
             you = whoIsMoreFast(self.speed, target.speed)
-
+            #se o seu pokemon for o mais rápido ele ira atacar primeiro
             if you:
+                #verificação se o golpe será acertado
                 hit, message = moveHitChance(self, move, target)
 
                 if hit:
                     print(attackLogic(self, move, target))
+                    time.sleep(1.5)
                     return False
                 
                 else:
@@ -76,8 +79,6 @@ class Pokemon:
                     return False
             
             else:
-                #target, player = changeTurn(self, target)
-                #print(f"DEPOIS: {self.name}, {target.name}")
                 target_move = target.moveset[2]
                 hit, message = moveHitChance(target, target_move, self)
 
@@ -89,6 +90,7 @@ class Pokemon:
 
                     if hit:
                         print(attackLogic(self, move, target))
+                        time.sleep(1.5)
                         return True
                 
                     else:
@@ -100,6 +102,7 @@ class Pokemon:
 
             if hit:
                 print(attackLogic(self, player_move, target))
+                time.sleep(1.5)
                 return True
         
             else:
@@ -131,7 +134,17 @@ class Pokemon:
                 print("escolha uma opção válida")
             except IndexError:
                 print("escolha uma opção válida")
-             
+
+    def pikachu_ai(self, move):
+        #para double team nao ser usado duas vezes seguidas
+        if self.last_move == self.moveset[2]:
+            while move == self.moveset[2]:
+                move = random.choice(self.moveset)
+
+        else:
+            move = random.choice(self.moveset)
+            
+        return move
 
 class Move:
     def __init__(self, name, type, accuracy, value, effect):
@@ -150,3 +163,6 @@ class Item:
         self.status = status
         self.value = value
         self.amount = amount
+
+
+
