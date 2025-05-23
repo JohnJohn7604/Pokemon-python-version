@@ -1,1 +1,1 @@
-random.choice(pikachuMove)
+self.victory = self.winner_checker(player, target)
