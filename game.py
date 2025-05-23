@@ -24,7 +24,7 @@ class Game:
         #POKEMONS
         charmanderBag = [potion, desparalyze, pokeball]
         charmanderMove = [ember, smokeScreen, growl, tailWhip]
-        charmander = Pokemon("Charmander", 5, 52, 43, 85, charmanderMove, charmanderBag)
+        charmander = Pokemon("Charmander", 5, 52, 43, 95, charmanderMove, charmanderBag)
         #charmander.updateStats()
 
         pikachuBag = [potion, desparalyze, pokeball]

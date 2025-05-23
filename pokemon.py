@@ -19,7 +19,7 @@ class Pokemon():
         self.accuracy = self.baseAccuracy
         self.evasivess = self.baseEvasivess
         self.moveset = moveset
-        self.hp = 20
+        self.hp = 100
         self.status = None
         self.bagslot = bagslot
         self.last_move = None
