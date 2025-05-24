@@ -3,6 +3,7 @@ from pokemon import Pokemon
 from item import Item
 from move import Move 
 
+
 class Game:
     def __init__(self):
         ###ITEMS
@@ -24,7 +25,7 @@ class Game:
         #POKEMONS
         charmanderBag = [potion, desparalyze, pokeball]
         charmanderMove = [ember, smokeScreen, growl, tailWhip]
-        charmander = Pokemon("Charmander", 5, 52, 43, 95, charmanderMove, charmanderBag)
+        charmander = Pokemon("Charmander", 5, 52, 43, 85, charmanderMove, charmanderBag)
         #charmander.updateStats()
 
         pikachuBag = [potion, desparalyze, pokeball]
@@ -36,16 +37,6 @@ class Game:
         self.player = charmander
         self.victory = False
 
-    def show_hp(self):
-        print("======================")
-        print(f"II   {self.target.name} Lvl. {self.target.lvl} II ")
-        print(f"II   HP: {self.target.hp:.0f}        II ")   
-        print("======================")  
-
-        print("                ========================")
-        print(f"           II  {self.player.name} Lvl. {self.player.lvl} II ")
-        print(f"                II  HP: {self.player.hp:.0f}             II ")   
-        print("                ========================") 
 
     def main_menu(self):
         print("========================================")
@@ -83,38 +74,44 @@ class Game:
                 if self.victory:
                     return ("Fim da batalha")
                 
-                self.show_hp()
+                show_hp(player, target)
                 user_input = self.main_menu()
 
                 if user_input == '1':
-                    self.show_hp()
+                    show_hp(player, target)
                     player_move = player.move_select()
+                    show_hp(player, target)
                     player.turn = player.fight(player_move, target)
                     print("\n")
                     time.sleep(2)
                     
                 elif user_input == '2':
                     try_again = True
-                    self.show_hp()
+                    
 
                     while try_again:
+                        show_hp(player, target)
                         player_item = player.bag()
                         try_again, target_captured = player_item.itemLogic(player, 
                         target)
             
                         if target_captured:
                             player.turn = True
-                        else:
+
+                        if try_again == False:
                             player_item.itemCount(player)
                             time.sleep(2)
                             player.turn = False
                     
                 else:
+                    show_hp(player, target)
                     print('Você fugiu da batalha')
                     time.sleep(2)
                     
             else:
                 target_move = target.pikachu_ai(target.moveset[2])
+                target.last_used_move = target_move
+                show_hp(player, target)
                 target.fight_with_player(target_move, player)  
                 player.turn = True
         

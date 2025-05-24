@@ -1,4 +1,5 @@
 import time
+from utils import show_hp
 
 class Item:
     def __init__(self, name, hp, pokeball, status, value, amount):
@@ -15,8 +16,9 @@ class Item:
                 newHp = self.value + oldHp
                 
                 if oldHp == 100:
+                    show_hp(player, target)
                     print("Não irá ter efeito")
-                    time.sleep(1.5)
+                    time.sleep(1)
                     return True, False
                 
                 if newHp > 100:
@@ -26,6 +28,7 @@ class Item:
                     hp_gain = self.value 
                     player.hp += hp_gain    
 
+                show_hp(player, target)
                 print(f"{player.name} usou {self.name}!")
                 time.sleep(1.5)
                 print(f"{player.name} encheu {hp_gain:.0f} do seu HP")
@@ -36,35 +39,44 @@ class Item:
                 if player.status == "paralyzed":
                     player.status = None
                     player.speed = player.baseSpd
+                    show_hp(player, target)
                     print(f"{player.name} usou {self.name}!")
-                    
+                    show_hp(player, target)
                     print(f"{player.name} curou paralisia!")
                     return False, False
                 else:
+                    show_hp(player, target)
                     print("Não irá ter efeito")
-                    time.sleep(1.5)
+                    time.sleep(1)
                     return True, False
 
             if self.pokeball:
                 
                 capturable = target.captureRate()
+                show_hp(player, target)
                 print(f"{player.name} usou a Pokebola!")
                 if capturable:
-                    time.sleep(1)
+                    time.sleep(1.7)
+                    show_hp(player, target)
                     print(f"..")
                     time.sleep(1)
+                    show_hp(player, target)
                     print(f"...")
                     time.sleep(1)
+                    show_hp(player, target)
                     print(f"Parabéns você capturou um {target.name}!!")
                     return False,  True
                     
                 
                 else: 
-                    time.sleep(1)
+                    time.sleep(1.7)
+                    show_hp(player, target)
                     print(f"..")
                     time.sleep(1)
+                    show_hp(player, target)
                     print(f"...")
                     time.sleep(1)
+                    show_hp(player, target)
                     print("Ah não! pensei ter capturado!")
                     return False, False
                 

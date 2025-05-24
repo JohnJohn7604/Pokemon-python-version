@@ -22,13 +22,15 @@ class Pokemon():
         self.hp = 100
         self.status = None
         self.bagslot = bagslot
-        self.last_move = None
         self.victory = False
         self.turn = False
         self.last_used_move = None
 
     def fight_with_player(self, move, player):
+        show_hp(player, self)
         if self.move_hit(move):
+            time.sleep(1.5)
+            show_hp(player, self)
             print(self.attack_logic(move, player))
             time.sleep(2)
         else:
@@ -38,8 +40,8 @@ class Pokemon():
 
     def move_select(self):
         print("========================================")
-        print(f"II (1) {self.moveset[0].name}    (2) {self.moveset[1].name}       II")
-        print(f"II (3) {self.moveset[2].name}   (4) {self.moveset[3].name}         II")
+        print(f"II (1) {self.moveset[0].name}   (2) {self.moveset[1].name}       II")
+        print(f"II (3) {self.moveset[2].name}   (4) {self.moveset[3].name}\t     II")
         print("========================================")
 
         index = int(input("Escolha um movimento e pressione 'Enter' ")) - 1
@@ -134,9 +136,11 @@ class Pokemon():
         ##todo golpe usado no oponente tem uma chance dele se esquivar
         #CHANCE DO OPONENTE DESVIAR DO GOLPE
         if self.evassives_target_chance() <= target.evasivess: 
+            show_hp(self, target)
             return (f"{target.name} desviou do ataque!")
         
         else:
+            show_hp(self, target)
             return self.conclusion(move, target)
 
     #chance do oponente escapar
@@ -151,6 +155,7 @@ class Pokemon():
             if self.critical:
                 print("Ataque crítico!")
                 time.sleep(2)
+                show_hp(self, target)
 
             return (f"{target.name} perdeu {self.damage:.0f} de HP! ")
         
@@ -193,7 +198,7 @@ class Pokemon():
                 return False
     
     def fight(self, move, target):
-        last_player_move = move #move que sera usado, apos vc ser atacado por estar mais lento
+        self.last_used_move = move #move que sera usado, apos vc ser atacado por estar mais lento
         #sua vez
         if self.turn:
             you = self.who_is_more_fast(target)
@@ -219,22 +224,13 @@ class Pokemon():
                 #oponente ataca primeiro pois vc esta mais lento
                 
                 target_move = target.pikachu_ai(target.moveset[2])
-                target.fight_with_player(target_move, self)
                 target.last_used_move = target_move
-                return (self.player_attacks(last_player_move, target))
+                target.fight_with_player(target_move, self)
+                return (self.player_attacks(self.last_used_move, target))
                     
-                
-                
-                    
-       
-        #vez do oponente apos ter recebido o seu golpe
-        
-            
-            #se ele acertar, se vc ainda estiver vivo, ataca imediatamente
-            
-
-
-    def player_attacks(self, move, target):            
+    #função para o player atacar logo apos o oponente, quando estiver mais lento
+    def player_attacks(self, move, target):    
+        show_hp(self, target)        
         if self.move_hit(move):
             print(self.attack_logic(move, target))
             time.sleep(1.5)
@@ -242,9 +238,6 @@ class Pokemon():
         else:
             return True
                     
-        
-                
-
     def captureRate(self):
         if self.hp < 30:
             return True
@@ -258,7 +251,7 @@ class Pokemon():
             for index, item in enumerate(self.bagslot, start = 1):
                 print(f"({index}) {self.bagslot[index - 1].name} x {self.bagslot[index - 1].amount}")
             
-            print("(0) Voltar")
+            print("(0) Voltar (ainda não implementado)")
             print("===================================================")
         
             try:
@@ -275,7 +268,8 @@ class Pokemon():
         if self.last_used_move == self.moveset[2]: 
             while move == self.moveset[2]:
                 move = random.choice(self.moveset)
-
+        
         return move
+            
             
         
