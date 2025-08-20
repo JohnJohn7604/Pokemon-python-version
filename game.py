@@ -1,5 +1,5 @@
 from utils import *
-from pokemon import Pokemon
+from pokemon import Pokemon, contra_atacar
 from item import Item
 from move import Move 
 
@@ -25,94 +25,106 @@ class Game:
         #POKEMONS
         charmanderBag = [potion, desparalyze, pokeball]
         charmanderMove = [ember, smokeScreen, growl, tailWhip]
-        charmander = Pokemon("Charmander", 5, 52, 43, 85, charmanderMove, charmanderBag)
+        charmander = Pokemon("Charmander", 5, 52, 43, 95, charmanderMove, 100, charmanderBag)
+        totodile = Pokemon("Totodile", 6, 60, 50, 92, charmanderMove, 100, charmanderBag)
         #charmander.updateStats()
 
         pikachuBag = [potion, desparalyze, pokeball]
-        pikachuMove = [quickattack, thunderwave, doubleTeam, tackle]
-        pikachu = Pokemon("Pikachu", 5, 55, 40, 90, pikachuMove, pikachuBag)
+        pikachuMove = [quickattack, quickattack, tackle, tackle]
+        pikachu = Pokemon("Pikachu", 5, 55, 40, 90, pikachuMove, 100, pikachuBag)
         #pikachu.updateStats()
 
-        self.target = pikachu
-        self.player = charmander
-        self.victory = False
+        self.alvo = pikachu
+        self.jogador = charmander
+        self.vitoria = False
 
-
-    def main_menu(self):
+    def menu_principal(self):
         print("========================================")
         print(f"II (1) LUTAR        (2)    BOLSA      II")
         print(f"II                  (3)    FUGIR      II")
         print("========================================")
 
         return input("Escolha uma opção e pressione 'Enter' ")
-    
-    def WinnerChecker(self, player, target):
-        if player.hp <= 0.1:
-            print(f"{player.name} desmaiou!")
-            return True
-        elif target.hp <= 0.1:
-            print(f"{target.name} desmaiou!")
-            return True
-        elif self.target_captured:
-            return True
-        else:
-            return False
 
 
-    def battle(self):
-        player = self.player
-        target = self.target
-        player.turn = True
-        target_captured = False
+    def batalha(self):
+        self.jogador.turno = True
 
-        while self.victory == False:
+        while self.vitoria == False:
             
-            if player.turn:
-                self.victory = WinnerChecker(player, target)
-                self.victory = target_captured
-
-                if self.victory:
-                    return ("Fim da batalha")
+            if self.jogador.turno: # verifica se houve alguma vitoria.
+                self.vitoria = verificar_vitoria(self.jogador, self.alvo)
+                if self.vitoria:
+                    return "Fim da batalha!"
                 
-                show_hp(player, target)
-                user_input = self.main_menu()
-
-                if user_input == '1':
-                    show_hp(player, target)
-                    player_move = player.move_select()
-                    show_hp(player, target)
-                    player.turn = player.fight(player_move, target)
-                    print("\n")
-                    time.sleep(2)
-                    
-                elif user_input == '2':
-                    try_again = True
-                    
-
-                    while try_again:
-                        show_hp(player, target)
-                        player_item = player.bag()
-                        try_again, target_captured = player_item.itemLogic(player, 
-                        target)
-            
-                        if target_captured:
-                            player.turn = True
-
-                        if try_again == False:
-                            player_item.itemCount(player)
-                            time.sleep(2)
-                            player.turn = False
-                    
                 else:
-                    show_hp(player, target)
-                    print('Você fugiu da batalha')
-                    time.sleep(2)
+                    mostrar_hp(self.jogador, self.alvo) #MOSTRA O HP NA TELA
+                    user_input = self.menu_principal() #CAPTURA A OPÇÃO QUE VC ESCOLHEU
+
+                    if user_input == '1':
+                        mostrar_hp(self.jogador, self.alvo) 
+                        jogador_move = self.jogador.escolher_ataque()
+
+                        #VERIFICA SE SEU SPEED É MAIOR QUE O DO OPONENTE
+                        if self.jogador.speed > self.alvo.speed:
+                            print("Você irá atacar primeiro!\n")   
+                            mostrar_hp(self.jogador, self.alvo) #MOSTRAR HP
+
+                            #VERIFICA SE VOCÊ IRÁ ACERTAR O MOVE
+                            if self.jogador.calcular_chance_de_acerto(jogador_move):
+                                print(self.jogador.logica_do_ataque(jogador_move, self.alvo))
+                                self.jogador.turno = False
+                                time.sleep(1.5)
+                                
+                            #SE ERRAR OPONENTE TE ATACA
+                            else:
+                                print("Vez do oponente!\n") 
+                                time.sleep(1)  
+                                alvo_move = self.alvo.pikachu_ai(random.choice(self.alvo.moveset))
+                                self.alvo.last_used_move = alvo_move
+                                self.alvo.turno_contra_o_jogador(alvo_move, self.jogador)
+                            
+                            time.sleep(2) 
+                            
+                        else:
+                            print("Oponente irá atacar primeiro!\n")   
+                            alvo_move = self.alvo.pikachu_ai(random.choice(self.alvo.moveset))
+                            self.alvo.last_used_move = alvo_move
+                            self.alvo.turno_contra_o_jogador(alvo_move, self.jogador)
+
+                            ## OPONENTE TE ATACA POR ESTAR MAIS RÁPIDO, VOCÊ ATACA LOGO EM SEGUIDA.
+                            return (contra_atacar(self.jogador, jogador_move, self.alvo)) 
+                            time.sleep(1.5)
+                            
+                        
+                    elif user_input == '2':
+                        try_again = True
+                        
+
+                        while try_again:
+                            mostrar_hp(self.jogador, self.alvo)
+                            self.item_escolhido = self.jogador.bag()
+                            try_again, self.alvo.captured = self.item_escolhido.logica_desse_item(self.jogador, 
+                            self.alvo)
+        
+                            if try_again == False:
+                                self.item_escolhido.itemCount(self.jogador)
+                                time.sleep(2)
+                                if self.alvo.captured:
+                                    return "Fim da batalha!"
+                                else:
+                                    self.jogador.turno = False
+                        
+                    else:
+                        mostrar_hp(self.jogador, self.alvo)
+                        print('Você fugiu da batalha')
+                        time.sleep(2)
                     
             else:
-                target_move = target.pikachu_ai(target.moveset[2])
-                target.last_used_move = target_move
-                show_hp(player, target)
-                target.fight_with_player(target_move, player)  
-                player.turn = True
+                self.alvo_move = self.alvo.pikachu_ai(random.choice(self.alvo.moveset))
+                self.alvo.last_used_move = self.alvo_move
+                mostrar_hp(self.jogador, self.alvo)
+                self.alvo.turno_contra_o_jogador(self.alvo_move, self.jogador)  
+                self.jogador.turno= True
         
                 print("\n")

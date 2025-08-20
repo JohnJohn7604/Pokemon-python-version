@@ -1,5 +1,5 @@
 import time
-from utils import show_hp
+from utils import mostrar_hp
 
 class Item:
     def __init__(self, name, hp, pokeball, status, value, amount):
@@ -10,77 +10,76 @@ class Item:
         self.value = value
         self.amount = amount
 
-    def itemLogic(self, player, target):
+    def logica_desse_item(self, jogador, alvo):
             if self.hp:
-                oldHp = player.hp
+                oldHp = jogador.hp
                 newHp = self.value + oldHp
                 
                 if oldHp == 100:
-                    show_hp(player, target)
+                    mostrar_hp(jogador, alvo)
                     print("Não irá ter efeito")
                     time.sleep(1)
                     return True, False
                 
                 if newHp > 100:
                     hp_gain = 100 - oldHp
-                    player.hp = 100
+                    jogador.hp = 100
                 else:
                     hp_gain = self.value 
-                    player.hp += hp_gain    
+                    jogador.hp += hp_gain    
 
-                show_hp(player, target)
-                print(f"{player.name} usou {self.name}!")
+                mostrar_hp(jogador, alvo)
+                print(f"{jogador.name} usou {self.name}!")
                 time.sleep(1.5)
-                print(f"{player.name} encheu {hp_gain:.0f} do seu HP")
+                print(f"{jogador.name} encheu {hp_gain:.0f} do seu HP")
                 return False, False
 
             if self.status == "desparalyze":
 
-                if player.status == "paralyzed":
-                    player.status = None
-                    player.speed = player.baseSpd
-                    show_hp(player, target)
-                    print(f"{player.name} usou {self.name}!")
-                    show_hp(player, target)
-                    print(f"{player.name} curou paralisia!")
+                if jogador.status == "paralyzed":
+                    jogador.status = None
+                    jogador.speed = jogador.baseSpd
+                    mostrar_hp(jogador, alvo)
+                    print(f"{jogador.name} usou {self.name}!")
+                    mostrar_hp(jogador, alvo)
+                    print(f"{jogador.name} curou paralisia!")
                     return False, False
                 else:
-                    show_hp(player, target)
+                    mostrar_hp(jogador, alvo)
                     print("Não irá ter efeito")
                     time.sleep(1)
                     return True, False
 
             if self.pokeball:
                 
-                capturable = target.captureRate()
-                show_hp(player, target)
-                print(f"{player.name} usou a Pokebola!")
-                if capturable:
+                mostrar_hp(jogador, alvo)
+                print(f"{jogador.name} usou a Pokebola!")
+                if alvo.capturavel():
                     time.sleep(1.7)
-                    show_hp(player, target)
+                    mostrar_hp(jogador, alvo)
                     print(f"..")
                     time.sleep(1)
-                    show_hp(player, target)
+                    mostrar_hp(jogador, alvo)
                     print(f"...")
                     time.sleep(1)
-                    show_hp(player, target)
-                    print(f"Parabéns você capturou um {target.name}!!")
+                    mostrar_hp(jogador, alvo)
+                    print(f"Parabéns você capturou um {alvo.name}!!")
                     return False,  True
                     
                 
                 else: 
                     time.sleep(1.7)
-                    show_hp(player, target)
+                    mostrar_hp(jogador, alvo)
                     print(f"..")
                     time.sleep(1)
-                    show_hp(player, target)
+                    mostrar_hp(jogador, alvo)
                     print(f"...")
                     time.sleep(1)
-                    show_hp(player, target)
+                    mostrar_hp(jogador, alvo)
                     print("Ah não! pensei ter capturado!")
                     return False, False
                 
-    def itemCount(self, player):
+    def itemCount(self, jogador):
         self.amount -= 1
         if self.amount == 0:# se o item acabar ele é removido da bolsa
-            player.bagslot.remove(self)
+            jogador.bagslot.remove(self)

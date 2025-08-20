@@ -5,7 +5,7 @@ from item import Item
 from utils import *
 
 class Pokemon():
-    def __init__(self, name, lvl, baseAtk, baseDef, baseSpd, moveset, bagslot):     
+    def __init__(self, name, lvl, baseAtk, baseDef, baseSpd, moveset, hp, bolsa_espaco):     
         self.name = name
         self.lvl = lvl
         self.baseAtk = baseAtk
@@ -19,26 +19,28 @@ class Pokemon():
         self.accuracy = self.baseAccuracy
         self.evasivess = self.baseEvasivess
         self.moveset = moveset
-        self.hp = 100
+        self.hp = hp
         self.status = None
-        self.bagslot = bagslot
-        self.victory = False
-        self.turn = False
+        self.bolsa_espaco = bolsa_espaco
+        self.vitoria = False
+        self.captured = False
+        self.turno= False
         self.last_used_move = None
+        self.critical = 1.50
 
-    def fight_with_player(self, move, player):
-        show_hp(player, self)
-        if self.move_hit(move):
+    def turno_contra_o_jogador(self, move, jogador):
+        mostrar_hp(jogador, self)
+        if self.calcular_chance_de_acerto(move):
             time.sleep(1.5)
-            show_hp(player, self)
-            print(self.attack_logic(move, player))
+            mostrar_hp(jogador, self)
+            print(self.logica_do_ataque(move, jogador))
             time.sleep(2)
         else:
             time.sleep(2)
             pass
             
 
-    def move_select(self):
+    def escolher_ataque(self):
         print("========================================")
         print(f"II (1) {self.moveset[0].name}   (2) {self.moveset[1].name}       II")
         print(f"II (3) {self.moveset[2].name}   (4) {self.moveset[3].name}\t     II")
@@ -48,20 +50,25 @@ class Pokemon():
         return self.moveset[index]
 
 
-    ##Sistema para calcular a chance do seu pokemon não atacar por algum motivo.        
-    def move_hit(self, move):
+    ##Sistema para calcular a chance do seu pokemon não atacar por algum motivo. 
+    #        
+    def calcular_chance_de_acerto(self, move):
         chance = random.randint(0, 100) 
+
         ## caso voce esteja paralizado, tem 20% de chance de errar o move
+
         if self.status == "paralyzed" and chance < 20:
             print(f"{self.name} não se mexe, está paralizado!") 
             return False 
         
-        elif move.type == 'Attack' or move.type == "status": # chance de voce errar um move 
-            chance = random.randint(0, self.baseAccuracy)
+        # chance de voce errar um move seja status ou attack
+
+        elif move.type == 'Attack' or move.type == "status": 
+            chance = random.randint(0, self.baseAccuracy) 
             print(f"{self.name} usou {move.name}! ")
             time.sleep(1)
 
-            if chance > self.accuracy: 
+            if chance > self.accuracy: #
                 print(f"{self.name} errou o ataque!")
                 return False
             
@@ -70,54 +77,42 @@ class Pokemon():
 
         elif move.type == 'self_status':
             print(f"{self.name} usou {move.name}! ")
+            self.last_used_move = move
+            print(f"DEBUG {move.name} foi para o last_used_move do jogador!")
             return True
-        
-    #Sistema para identificar quem ataca primeiro
-    def who_is_more_fast(self, target):
-        #se sua velocidade está maior do que a do oponente vc ataca primeiro
-        if self.speed > target.speed:
-            return True
-        else:
-            print("Oponente irá atacar primeiro, pois você está mais lento\n")    
-            time.sleep(1.5)
-            return False 
-
-    def critical_chance(self):
-        rate = random.randint(0, 100)
-        self.critical = 1.50
-        return rate
          
     #calcular o dano com base no seu status de ataque e a defesa do inimigo e a diferença de niveis
-    def damageCalculator(self, move, target):
-        lvlFactor = (self.lvl / (target.lvl + 5) )
-        formulaAtkDef = (self.attack ) / (target.defense)
+    def calcular_dano(self, move, alvo):
+        lvlFactor = (self.lvl / (alvo.lvl + 5) )
+        formulaAtkDef = (self.attack ) / (alvo.defense)
         formula = formulaAtkDef * move.value 
 
         #20% do dano ser critico
-        if self.critical_chance() <= 20:
+        rate = random.randint(0, 100)
+        if rate <= 20:
             self.damage = (lvlFactor * formula * self.critical) 
-            self.critical = True
+            
         else:
             self.damage = (lvlFactor * formula) 
-            self.critical = False
+            
 
     ##CONDIÇÃO DO MOVE, CASO SEJA DE TIRAR DANO OU SE PROVOCA BUFFER AO OPP.
-    def attack_logic(self, move, target):
+    def logica_do_ataque(self, move, alvo):
         time.sleep(1.5)
         if (move.type == 'Attack'):
-            self.damageCalculator(move, target)
+            self.calcular_dano(move, alvo)
 
         elif (move.effect == "paralyze"):
-            if (target.status != None and target.status != "paralyzed"):
+            if (alvo.status != None and alvo.status != "paralyzed"):
                 return ("O golpe falhou...")
 
-            elif (target.status == "paralyzed"):
-                return (f"{target.name} já está paralisado!") 
+            elif (alvo.status == "paralyzed"):
+                return (f"{alvo.name} já está paralisado!") 
 
             else:
-                target.status = "paralyzed"
-                target.speed += (target.speed * (-0.5))
-                return (f"{target.name} ficou paralisado")
+                alvo.status = "paralyzed"
+                alvo.speed += (alvo.speed * (-0.5))
+                return (f"{alvo.name} ficou paralisado")
 
         elif (move.effect == "evasive"):
             if self.evasivess >= 70:
@@ -128,135 +123,95 @@ class Pokemon():
                 time.sleep(1)   
                 return (f"{self.name} aumentou um pouco sua evasiva!")
             
-        #se player escolhe um move do tipo status, mas há um limite de quantas vezes pode ser usado. 
-        else:
-            if self.status_limit(move, target):
-                return "Status do oponente não abaixa mais"
-            
-        ##todo golpe usado no oponente tem uma chance dele se esquivar
-        #CHANCE DO OPONENTE DESVIAR DO GOLPE
-        if self.evassives_target_chance() <= target.evasivess: 
-            show_hp(self, target)
-            return (f"{target.name} desviou do ataque!")
+        #há um limite de quantas vezes um move do tipo status pode ser usado.
         
         else:
-            show_hp(self, target)
-            return self.conclusion(move, target)
-
-    #chance do oponente escapar
-    def evassives_target_chance(self):
+            if self.limitar_golpe_status(move, alvo):
+                return "Status do oponente não abaixa mais"
+            
+    
+        #CHANCE DO OPONENTE DESVIAR DO GOLPE
         rate = random.randint(0, 100)
-        return rate
+        if rate <= alvo.evasivess: 
+            #mostrar_hp(self, alvo)
+            return (f"{alvo.name} desviou do ataque!")
+        
+        else:
+            #mostrar_hp(self, alvo)
+            return self.processar_final_do_turno(move, alvo)
 
-    def conclusion(self, move, target):
+    #mostrar o que aconteceu se o oponente perdeu hp, defesa, força do ataque... etc
+
+    def processar_final_do_turno(self, move, alvo):
         if move.type == "Attack":
-            target.hp -= self.damage
+            alvo.hp -= self.damage
 
             if self.critical:
                 print("Ataque crítico!")
-                time.sleep(2)
-                show_hp(self, target)
+                time.sleep(1)
+                
 
-            return (f"{target.name} perdeu {self.damage:.0f} de HP! ")
+            return (f"{alvo.name} perdeu {self.damage:.0f} de HP! ")
         
         elif move.effect == "status_def":
-            target.defense -= self.status_dmg
-            return (f"{target.name} perdeu um pouco da defesa!")
+            alvo.defense -= self.status_dmg
+            return (f"{alvo.name} perdeu um pouco da defesa!")
         
         elif move.effect == "status_accuracy":
-            target.accuracy -= self.status_dmg
-            return (f"{target.name} perdeu um pouco da precisão dos golpes!")
+            alvo.accuracy -= self.status_dmg
+            return (f"{alvo.name} perdeu um pouco da precisão dos golpes!")
         
         elif move.effect == "status_atk":
-            target.attack -= self.status_dmg
-            return (f"{target.name} perdeu um pouco da força dos golpes!")
+            alvo.attack -= self.status_dmg
+            return (f"{alvo.name} perdeu um pouco da força dos golpes!")
         
     #verifica se há limite dos status do oponente serem reduzidos
-    def status_limit(self, move, target):
+
+    def limitar_golpe_status(self, move, alvo):
         if move.effect == "status_def":
-            if  target.defense <= 10:
+            if  alvo.defense <= 10:
                 self.status_dmg = 0
                 return True
             else:
-                self.status_dmg = target.defense * move.value
+                self.status_dmg = alvo.defense * move.value
                 return False
             
         elif (move.effect == "status_accuracy"):
-            if  target.accuracy <= 10:
+            if  alvo.accuracy <= 10:
                 self.status_dmg = 0
                 return True
             else:
-                self.status_dmg = target.accuracy * move.value
+                self.status_dmg = alvo.accuracy * move.value
                 return False
         
         elif (move.effect == "status_atk"):
-            if  target.attack <= 10:
+            if  alvo.attack <= 10:
                 self.status_dmg = 0
                 return True
             else:
-                self.status_dmg = target.attack * move.value
+                self.status_dmg = alvo.attack * move.value
                 return False
-    
-    def fight(self, move, target):
-        self.last_used_move = move #move que sera usado, apos vc ser atacado por estar mais lento
-        #sua vez
-        if self.turn:
-            you = self.who_is_more_fast(target)
-            #se o seu pokemon for o mais rápido vc ira atacar primeiro
-            if you:
-                #verificação se o golpe será acertado
-            
-                if self.move_hit(move):
-                    print(self.attack_logic(move, target))
-                    time.sleep(1.5)
-                    victory = WinnerChecker(self, target)
-                    if victory:
-
-                        return True
-                    else:
-                        return False
-                
-                else:
+        
                     
-                    return False
-            
-            else:
-                #oponente ataca primeiro pois vc esta mais lento
-                
-                target_move = target.pikachu_ai(target.moveset[2])
-                target.last_used_move = target_move
-                target.fight_with_player(target_move, self)
-                return (self.player_attacks(self.last_used_move, target))
-                    
-    #função para o player atacar logo apos o oponente, quando estiver mais lento
-    def player_attacks(self, move, target):    
-        show_hp(self, target)        
-        if self.move_hit(move):
-            print(self.attack_logic(move, target))
-            time.sleep(1.5)
-            return True
-        else:
-            return True
-                    
-    def captureRate(self):
+    def capturavel(self):
         if self.hp < 30:
             return True
         else:
             return False
 
-    def bag(self):
+    def bolsa(self):
         while True:
             print("===================================================")
             
-            for index, item in enumerate(self.bagslot, start = 1):
-                print(f"({index}) {self.bagslot[index - 1].name} x {self.bagslot[index - 1].amount}")
+            for index, item in enumerate(self.bolsa_espaco, start = 1):
+                print(f"({index}) {self.bolsa_espaco[index - 1].name} x {self.bolsa_espaco[index - 1].amount}")
             
             print("(0) Voltar (ainda não implementado)")
             print("===================================================")
         
             try:
                 index = int(input("Escolha um item e pressione 'Enter' ")) - 1
-                item = self.bagslot[index]
+                item = self.bolsa_espaco[index]
                 return item
             except ValueError:
                 print("escolha uma opção válida")
@@ -270,6 +225,16 @@ class Pokemon():
                 move = random.choice(self.moveset)
         
         return move
+    
+#função para o jogador atacar logo apos o oponente, quando estiver mais lento
+def contra_atacar(jogador, move, alvo):    
+    mostrar_hp(jogador, alvo)        
+    if jogador.calcular_chance_de_acerto(move):
+        print(jogador.logica_do_ataque(move, alvo))
+        time.sleep(1.5)
+        return True
+    else:
+        return True
             
             
         
