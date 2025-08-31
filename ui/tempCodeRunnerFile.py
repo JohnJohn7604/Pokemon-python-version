@@ -1,0 +1,16 @@
+    self.btn = QPushButton("Lutar")
+            self.btn.clicked.connect(self.fight_btn)
+            self.btn_2 = QPushButton("Bolsa")
+            self.btn_2.clicked.connect(self.bag_btn)
+            self.btn_3 = QPushButton("Fugir")
+            self.btn_3.clicked.connect(self.run_btn)
+            self.label = QLabel("O que o jogador irá fazer?")
+            self.label.setFixedSize(200, 50)
+            
+
+            self.grid = QGridLayout()
+            self.grid.addWidget(self.btn,0,1)
+            self.grid.addWidget(self.btn_2,0,2)
+            self.grid.addWidget(self.btn_3,1,1)
+            self.grid.addWidget(self.label,0,0)
+            self.setLayout(self.grid)
